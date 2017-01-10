@@ -331,7 +331,6 @@ const parseObjectKeyValueToMongoObjectKeyValue = (restKey, restValue, schema) =>
 }
 
 const parseObjectToMongoObjectForCreate = (className, restCreate, schema) => {
-  restCreate = addLegacyACL(restCreate);
   const mongoCreate = {}
   for (const restKey in restCreate) {
     if (restCreate[restKey] && restCreate[restKey].__type === 'Relation') {
@@ -363,7 +362,7 @@ const parseObjectToMongoObjectForCreate = (className, restCreate, schema) => {
 // Main exposed method to help update old objects.
 const transformUpdate = (className, restUpdate, parseFormatSchema) => {
   const mongoUpdate = {};
-  const acl = addLegacyACL(restUpdate);
+  const acl = restUpdate;
   if (acl._rperm || acl._wperm || acl._acl) {
     mongoUpdate.$set = {};
     if (acl._rperm) {
