@@ -218,6 +218,12 @@ function transformQueryKeyValue(className, key, value, schema) {
     schema.fields[key] &&
     schema.fields[key].type === 'Pointer';
 
+  const expectedTypeIsObject = 
+    schema && 
+    schema.fields[key] && 
+    schema.fields[key].type === 'Object';
+
+
   if (expectedTypeIsPointer || !schema && value && value.__type === 'Pointer') {
     key = '_p_' + key;
   }
@@ -235,6 +241,9 @@ function transformQueryKeyValue(className, key, value, schema) {
   // Handle atomic values
   if (transformTopLevelAtom(value) !== CannotTransform) {
     return {key, value: transformTopLevelAtom(value)};
+  } else if (expectedTypeIsObject) {
+    // Handle query for nested objects
+    return {key: key, value: value};
   } else {
     throw new Parse.Error(Parse.Error.INVALID_JSON, `You cannot use ${value} as a query parameter.`);
   }
